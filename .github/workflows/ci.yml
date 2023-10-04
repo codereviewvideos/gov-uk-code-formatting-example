@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint and Prettier
+        run: npm run lint:check && npm run format:check
+
+      - name: Create status check
+        id: status
+        run: echo "Code formatting and linting checks passed."
+
+      - name: Set PR status
+        if: ${{ steps.status.outcome == 'success' }}
+        uses: github/status-check@v2
+        with:
+          context: "Code Quality Checks"
+          state: success
+          description: "Code formatting and linting checks passed."
+          target_url: "https://example.com/docs/code-quality"
+
+      - name: Set PR status (failure)
+        if: ${{ steps.status.outcome != 'success' }}
+        uses: github/status-check@v2
+        with:
+          context: "Code Quality Checks"
+          state: failure
+          description: "Code formatting and linting checks failed. Please fix the issues."
