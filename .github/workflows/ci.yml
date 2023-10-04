@@ -27,20 +27,3 @@ jobs:
       - name: Create status check
         id: status
         run: echo "Code formatting and linting checks passed."
-
-      - name: Set PR status
-        if: ${{ steps.status.outcome == 'success' }}
-        uses: github/status-check@v2
-        with:
-          context: "Code Quality Checks"
-          state: success
-          description: "Code formatting and linting checks passed."
-          target_url: "https://example.com/docs/code-quality"
-
-      - name: Set PR status (failure)
-        if: ${{ steps.status.outcome != 'success' }}
-        uses: github/status-check@v2
-        with:
-          context: "Code Quality Checks"
-          state: failure
-          description: "Code formatting and linting checks failed. Please fix the issues."
